@@ -4,3 +4,4 @@ git clone https://github.com/deadlight1/comments_test_task.git
 maven: clean, install
 
 With docker:
+docker pull deadlight1/test-task
