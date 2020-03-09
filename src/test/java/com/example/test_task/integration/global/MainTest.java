@@ -20,8 +20,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -60,6 +62,7 @@ public class MainTest {
     @Test
     public void test() throws Exception {
         int quantityOfRequests = 1000;
+        Map<Boolean, CommentDto> comments = new HashMap<>();
         for (int i = 0; i < quantityOfRequests; i++) {
             MockHttpServletResponse response = mvc.perform(post("/comment")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -68,14 +71,15 @@ public class MainTest {
                     .andReturn().getResponse();
             int status = response.getStatus();
             CommentDto commentDto = objectMapper.readValue(response.getContentAsString(), CommentDto.class);
-            if (status == 201) {
-                assertTrue(commentRepository.findById(commentDto.getId()).isPresent());
-                assertTrue(notificationRepository.findByCommentId(commentDto.getId()).isPresent());
-            } else {
-                assertFalse(commentRepository.findById(commentDto.getId()).isPresent());
-                assertFalse(notificationRepository.findByCommentId(commentDto.getId()).isPresent());
-            }
+            if (status == 201)
+                comments.put(true, commentDto);
+            else
+                comments.put(false, commentDto);
         }
+        comments.forEach((key, value) -> {
+            assertEquals(key, commentRepository.findById(value.getId()).isPresent());
+            assertEquals(key, notificationRepository.findByCommentId(value.getId()).isPresent());
+        });
         System.out.println("Percentage of successfully created comments: "
                 + commentRepository.count() * 100 / quantityOfRequests
                 + "%");
