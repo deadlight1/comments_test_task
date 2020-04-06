@@ -10,7 +10,7 @@ docker pull deadlight1/test-task:second
 Имеется класс, реализующий два метода, реализующих не очень быстрый и не самый надежный функционал.
 Метод doSomeWorkOnCommentCreation() имитирует какую-то бизнес логику при добавления комментария в системе.
 Метод doSomeWorkOnNotification() имитирует какую-то бизнес логику при добавлении уведомления в системе.
-
+```java
 public class BusinessLogic {
 	public static void sleepAndRandomThrowRuntimeException(int seconds, int exceptionProbabilityProc){
 		try {
@@ -26,7 +26,7 @@ public class BusinessLogic {
 		sleepAndRandomThrowRuntimeException(1, 30);
 	}
 }
-
+```
 Задача:
 
 Применяя возможности Spring написать REST API добавления комментариев в базу.
